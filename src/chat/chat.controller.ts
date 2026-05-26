@@ -1,13 +1,19 @@
 
 import { Body, Controller, Post } from '@nestjs/common';
-import { ChatMessageDto } from './dto/chat-message.dto';
+import { ChatService } from './chat.service';
+import { CreateChatMessageDto } from './dto/create-chat-message.dto';
 
 @Controller('chat')
 export class ChatController {
+  constructor(private readonly chatService: ChatService) {}
+
     @Post()
-    sendMessage(@Body() body: ChatMessageDto) {
-        return {
-            reply: `Recibí tu mensaje: "${body.message}". Backend conectado correctamente.`,
-        };
-    }
+  sendMessage(@Body() body: CreateChatMessageDto) {
+    const response = this.chatService.getMockReply(body.message);
+
+    return {
+      ...response,
+      createdAt: new Date().toISOString(),
+    };
+  }
 }
